@@ -1,12 +1,14 @@
 """
-This is to calculate the time for the under voltage element to operate
+This is to calculate the time for the over voltage element to operate
 It takes in a few arguments
 -d = delay setting
 -v = actual average phase to phase voltage/test voltage in kV eg. 10.8kV
--p = pickup setting for undervoltage.
+-p = pickup setting for over.
 
 A usage example is:
-python underv.py -d 10 -p 8.8 -v 5.5
+
+python overv.py -d 10 -p 13.2 -v 14.8
+is 82 seconds
 
 """
 
@@ -23,9 +25,8 @@ args = parser.parse_args()
 
 def trip_time (delay, voltage, pickup):
 
-    print(f'voltage pickup {voltage/pickup}')
-    if voltage<pickup:
-        x = 1-voltage/pickup
+    if voltage>pickup:
+        x = (voltage/pickup) -1
         y = delay/x
         time_to_trip = y
     else:
@@ -35,4 +36,4 @@ def trip_time (delay, voltage, pickup):
 
 if __name__ == '__main__':
 
-    print(f'The under voltage trip time is: {round(trip_time(args.delay, args.voltage, args.pickup),3)}')
+    print(f'The over voltage trip time is: {round(trip_time(args.delay, args.voltage, args.pickup),3)}')
