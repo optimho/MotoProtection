@@ -15,9 +15,11 @@ A usage example is:
 In our example we have chosen a thermal time constant of 120s
 The motor is a 132A motor and the cell has a CT ratio of 200, so 0.67
 we will do the calculation with no pre load so a cold motor defaults to Ip = 0 if not specified
+we will test an overload of 2 x Ib
+python thermal.py -tau 120 -i 1.34 -ip 0 -ib 0.67 -k 1.02
 
-python thermal.py -tau 120 -ip 0 -ib 0.67 -k 1.02
-
+If one has previous current flowing for a good amount of time, like 5 x tau then add -ib
+python thermal.py -tau 120 -i 2.01 -ip 0.670 -ib 0.67 -k 1.02
 """
 
 import math
@@ -45,14 +47,15 @@ def trip_time (tau, injected, iprev, rated, securityFactor):
 
         It returns a time in seconds
     """
+
     w = injected**2 - iprev**2
     x = injected**2 - (securityFactor*rated)**2
     y = w/x
-    z = math.log(math.e)
-    time_to_trip = tau * (z * y)
+    z = math.log(y)
+    time_to_trip = tau * (z)
 
     return time_to_trip
 
 if __name__ == '__main__':
 
-    print(f'The thermal trip time is: {round(trip_time(args.tau, args.injected, args.iperv, args.rated, args.security),3)}')
+    print(f'The thermal trip time is: {round(trip_time(args.tau, args.injected, args.iprev, args.rated, args.security),3)}')
